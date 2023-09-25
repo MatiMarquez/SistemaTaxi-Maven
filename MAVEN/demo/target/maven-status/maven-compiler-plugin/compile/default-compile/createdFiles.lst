@@ -1,0 +1,6 @@
+com\example\demo\repository\AutoRepository.class
+com\example\demo\DemoApplication.class
+com\example\demo\model\Dueño.class
+com\example\demo\services\AutoService.class
+com\example\demo\controller\AutoController.class
+com\example\demo\model\Auto.class
