@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.Auto;
 import com.example.demo.model.Chofer;
 import com.example.demo.services.ChoferService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/chofer")
+@CrossOrigin(origins = "*")
 public class ChoferController {
 
     @Autowired
@@ -27,6 +29,11 @@ public class ChoferController {
     @PostMapping("/{id}/update")
     public ResponseEntity update(@PathVariable Integer id, @RequestBody Chofer c){
         return cs.update(id, c);
+    }
+
+    @PostMapping("/{id}/setAuto")
+    public ResponseEntity setAuto(@PathVariable Integer id, @RequestBody Auto auto){
+        return cs.setAuto(id, auto);
     }
 
     @PostMapping("/{id}/delete")

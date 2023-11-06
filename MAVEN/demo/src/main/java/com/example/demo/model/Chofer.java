@@ -13,9 +13,11 @@ import java.util.List;
 @Entity
 public class Chofer {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String dni;
     private String nombre;
+
     @OneToMany(mappedBy = "chofer")
     @JsonIgnore
     private List<Auto> autos;

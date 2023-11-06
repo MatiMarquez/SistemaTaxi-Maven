@@ -1,6 +1,8 @@
 package com.example.demo.services;
 
+import com.example.demo.model.Auto;
 import com.example.demo.model.Chofer;
+import com.example.demo.repository.AutoRepository;
 import com.example.demo.repository.ChoferRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,13 +16,18 @@ import static org.springframework.http.HttpStatus.*;
 public class ChoferService {
     @Autowired
     public ChoferRepository cr;
-
+    @Autowired
+    public AutoRepository ar;
     public ChoferService(ChoferRepository cr){
         this.cr = cr;
     }
 
     public List<Chofer> getAll(){
-        return cr.findAll();
+        try {
+            return cr.findAll();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public ResponseEntity add(Chofer c){
@@ -44,8 +51,25 @@ public class ChoferService {
         }
     }
 
+    public ResponseEntity setAuto(Integer id, Auto auto){
+        try {
+            Chofer chofer = cr.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Propietario no encontrado!!"));
+            auto.setChofer(chofer);
+            ar.save(auto);
+            chofer.getAutos().add(auto);
+            cr.save(chofer);
+            return ResponseEntity.status(OK).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     public ResponseEntity delete(Integer id){
-        cr.deleteById(id);
-        return ResponseEntity.status(OK).build();
+        try {
+            cr.deleteById(id);
+            return ResponseEntity.status(OK).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

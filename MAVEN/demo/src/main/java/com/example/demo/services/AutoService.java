@@ -1,7 +1,10 @@
 package com.example.demo.services;
 
 import com.example.demo.model.Auto;
+import com.example.demo.model.Chofer;
+import com.example.demo.model.Viaje;
 import com.example.demo.repository.AutoRepository;
+import com.example.demo.repository.ViajeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,18 +18,25 @@ public class AutoService {
     @Autowired
     public AutoRepository ar;
 
+    @Autowired
+    public ViajeRepository vr;
+
     public AutoService(AutoRepository ar){
         this.ar = ar;
     }
 
     public List<Auto> getAll(){
-        return ar.findAll();
+        try {
+            return ar.findAll();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public ResponseEntity add(Auto a){
         try {
             ar.save(a);
-            return ResponseEntity.status(CREATED).build();
+            return ResponseEntity.status(CREATED).body(a);
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
         }
@@ -46,7 +56,24 @@ public class AutoService {
     }
 
     public ResponseEntity delete(Integer id){
-        ar.deleteById(id);
-        return ResponseEntity.status(OK).build();
+        try {
+            ar.deleteById(id);
+            return ResponseEntity.status(OK).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    public ResponseEntity setViaje(Integer id, Viaje viaje){
+        try {
+            Auto auto = ar.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Propietario no encontrado!!"));
+            viaje.setAuto(auto);
+            vr.save(viaje);
+            auto.getViajes().add(viaje);
+            ar.save(auto);
+            return ResponseEntity.status(OK).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

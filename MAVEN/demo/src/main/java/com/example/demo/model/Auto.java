@@ -13,9 +13,11 @@ import java.util.List;
 @Entity
 public class Auto {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String modelo;
     private String matricula;
+
     @ManyToOne
     @JoinColumn(name="idChofer")
     private Chofer chofer;
